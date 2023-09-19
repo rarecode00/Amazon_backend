@@ -16,12 +16,12 @@ router.post(
   body("email").isEmail(),
   body("password").isLength({ min: 5 }),
   async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone } = req.body;
 
     const errors = validationResult(req);
 
-    if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array()})
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     try {
@@ -39,6 +39,7 @@ router.post(
         name: name,
         email: email,
         password: secPass,
+        mobile: phone,
       });
       const data = {
         user: user.id,
@@ -62,10 +63,10 @@ router.post(
 
 // Router 2: To login the user with credentials.
 
-router.post("/login", body('email').isEmail() ,  async (req, res) => {
+router.post("/login", body("email").isEmail(), async (req, res) => {
   const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    return res.status(400).json({errors: errors.array()})
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
   const { email, password } = req.body;
 
@@ -107,7 +108,7 @@ router.post("/login", body('email').isEmail() ,  async (req, res) => {
 router.get("/getuser", fetchuser, async (req, res) => {
   try {
     const user = await User.findById(req.user).select("-password");
-    return res.json({succes: true , user})
+    return res.json({ succes: true, user });
   } catch {
     return res
       .status(500)

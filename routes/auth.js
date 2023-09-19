@@ -16,7 +16,7 @@ router.post(
   body("email").isEmail(),
   body("password").isLength({ min: 5 }),
   async (req, res) => {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, mobile } = req.body;
 
     const errors = validationResult(req);
 
@@ -39,7 +39,7 @@ router.post(
         name: name,
         email: email,
         password: secPass,
-        mobile: phone,
+        mobile: mobile,
       });
       const data = {
         user: user.id,

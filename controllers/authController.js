@@ -1,4 +1,5 @@
 const { findOne, create } = require("../models/User");
+const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
@@ -40,6 +41,7 @@ const signUp = async (req, res) => {
     return res.json({
       success: true,
       authToken,
+      user,
       message: "User Created Successfully",
     });
   } catch (error) {
@@ -66,10 +68,12 @@ const login = async (req, res) => {
       });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return res.json({ success: false, message: "Invalid Password." });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid Password." });
     }
 
     const payload = {
@@ -79,8 +83,11 @@ const login = async (req, res) => {
     };
 
     const authToken = jwt.sign(payload, JWT_SECRET);
-
-    return res.json({ success: true, authToken });
+    const userWithoutPassword = { ...user._doc };
+    delete userWithoutPassword.password;
+    return res
+      .status(200)
+      .json({ success: true, authToken, user: userWithoutPassword });
   } catch (error) {
     console.log(error);
     return res

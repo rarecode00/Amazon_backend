@@ -9,12 +9,22 @@ module.exports = {
       return cb("Product Name Doesn't exists", null);
     }
 
-    Product.create(data)
-      .then((created) => {
-        cb(null, created);
+    Product.findOne({ name: data.name })
+      .then((data) => {
+        if (!data) {
+          Product.create(data)
+            .then((created) => {
+              cb(null, created);
+            })
+            .catch((err) => {
+              cb(err, null);
+            });
+        } else {
+          cb("Product is already Exists", null);
+        }
       })
       .catch((err) => {
-        cb(err, null);
+        console.log("Error while findone the product");
       });
   },
 };

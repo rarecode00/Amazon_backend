@@ -1,36 +1,21 @@
 const express = require("express");
-const Product = require("../models/Product");
+const Product = require("../routes/product");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const addProduct = async (req, res) => {
-  try {
-    const { name, category, rating, brand, color, price, url } = req.body;
-    const findProduct = await Product.find({ name });
-    if (findProduct.length > 0) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Product already exists with this Name",
-        });
-    }
-    const newProduct = new Product({
-      name,
-      category,
-      rating,
-      brand,
-      color,
-      price,
-      url,
-    });
+router.post("/add-product", (req, res) => {
+  console.log("called");
+  const input = req && req.body;
 
-    const saveProduct = await newProduct.save();
-    return res.json({ success: true, message: "Product added successfully" });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
-  }
-};
+  Product.addProduct(input, function (err, data) {
+    if (!err) {
+      console.log("Product Created successfully");
+      res.send(data);
+    } else {
+      console.log("Error while creating Product", err);
+      res.status(422).json({ errMsg: err });
+    }
+  });
+});
+
+module.exports = router;

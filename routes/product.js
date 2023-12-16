@@ -27,6 +27,15 @@ module.exports = {
         console.log("Error while findone the product");
       });
   },
+  getAllProduct: function (cb) {
+    Product.find({})
+      .then((data) => {
+        cb(null, data);
+      })
+      .catch((err) => {
+        cb(err, null);
+      });
+  },
 };
 
 var getFilteredData = function (input) {

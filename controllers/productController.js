@@ -16,4 +16,14 @@ router.post("/add-product", (req, res) => {
   });
 });
 
+router.get("/getAllProduct", (req, res) => {
+  Product.getAllProduct(function (err, data) {
+    if (!err && data) {
+      res.json(data);
+    } else {
+      res.status(422).json({ errMsg: err });
+    }
+  });
+});
+
 module.exports = router;
